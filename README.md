@@ -85,7 +85,7 @@ DIISI FOTO
 
 **Pembagian IP**
 
-DIISI FOTO
+<img width="909" alt="image" src="https://github.com/fihrizilhamr/Jarkom-Modul-5-D07-2023/assets/105486369/a8aea2b0-bfbd-4f1f-a4e3-962dfa14e037">
 
 
 
@@ -101,7 +101,7 @@ iface eth0 inet dhcp
 
 auto eth1
 iface eth1 inet static
-	address 10.25.14.145
+	address 10.25.14.129
 	netmask 255.255.255.252
 
 auto eth2
@@ -115,19 +115,19 @@ iface eth2 inet static
 ```
 auto eth0
 iface eth0 inet static
-	address 10.25.14.150
-	netmask 255.255.255.252
-	gateway 10.25.14.149
+        address 10.25.14.150
+        netmask 255.255.255.252
+        gateway 10.25.14.149
 
 auto eth1
 iface eth1 inet static
-	address 10.25.8.1
-	netmask 255.255.252.0
+        address 10.25.0.1
+        netmask 255.255.248.0
 
 auto eth2
 iface eth2 inet static
-	address 10.25.0.1
-	netmask 255.255.248.0
+        address 10.25.8.1
+        netmask 255.255.252.0
 ```
 
 **Frieren**
@@ -135,19 +135,19 @@ iface eth2 inet static
 ```
 auto eth0
 iface eth0 inet static
-	address 10.25.14.146
-	netmask 255.255.255.252
-	gateway 10.25.14.145
+        address 10.25.14.130
+        netmask 255.255.255.252
+        gateway 10.25.14.129
 
 auto eth1
 iface eth1 inet static
-	address 10.25.14.137
-	netmask 255.255.255.252
+        address 10.25.14.133
+        netmask 255.255.255.252
 
 auto eth2
 iface eth2 inet static
-	address 10.25.14.141
-	netmask 255.255.255.252
+        address 10.25.14.137
+        netmask 255.255.255.252
 ```
 
 **Himmel**
@@ -155,19 +155,19 @@ iface eth2 inet static
 ```
 auto eth0
 iface eth0 inet static
-	address 10.25.14.138
-	netmask 255.255.255.252
-	gateway 10.25.14.137
+        address 10.25.14.138
+        netmask 255.255.255.252
+        gateway 10.25.14.137
 
 auto eth1
 iface eth1 inet static
-	address 10.25.14.1
-	netmask 255.255.255.128
+        address 10.25.12.1
+        netmask 255.255.254.0
 
 auto eth2
 iface eth2 inet static
-	address 10.25.12.1
-	netmask 255.255.254.0
+        address 10.25.14.1
+        netmask 255.255.255.128
 ```
 
 **Fern**
@@ -175,19 +175,19 @@ iface eth2 inet static
 ```
 auto eth0
 iface eth0 inet static
-	address 10.25.14.3
-	netmask 255.255.255.128
-	gateway 10.25.14.1
+        address 10.25.14.2
+        netmask 255.255.255.128
+        gateway 10.25.14.1
 
 auto eth1
 iface eth1 inet static
-	address 10.25.14.133
-	netmask 255.255.255.252
+        address 10.25.14.141
+        netmask 255.255.255.252
 
 auto eth2
 iface eth2 inet static
-	address 10.25.14.129
-	netmask 255.255.255.252
+        address 10.25.14.145
+        netmask 255.255.255.252
 ```
 
 **Sein**
@@ -203,31 +203,31 @@ iface eth0 inet static
 **Stark**
 
 ```
-auto eth0
-iface eth0 inet static
-	address 10.25.14.142
-	netmask 255.255.255.252
-	gateway 10.25.14.141
+auto eth0	
+iface eth0 inet static	
+	address 10.25.14.134
+	netmask 255.255.255.252	
+	gateway 10.25.14.133
 ```
 
 **Revolte**
 
 ```
-auto eth0
+auto eth0	
 iface eth0 inet static
-	address 10.25.14.130
+	address 10.25.14.146
 	netmask 255.255.255.252
-	gateway 10.25.14.129
+	gateway 10.25.14.145
 ```
 
 **Richter**
 
 ```
-auto eth0
-iface eth0 inet static
-	address 10.25.14.134
-	netmask 255.255.255.252
-	gateway 10.25.14.133
+auto eth0	
+iface eth0 inet static	
+	address 10.25.14.142
+	netmask 255.255.255.252	
+	gateway 10.25.14.141
 ```
 
 **Client**
@@ -242,14 +242,15 @@ Setelah melakukan subnetting pada masing masing node yang ada, Selanjutnya kami 
 **Aura**
 
 ```
-route add -net 10.25.0.0 netmask 255.255.248.0 gw 10.25.14.150 (A9)
-route add -net 10.25.8.0 netmask 255.255.252.0 gw 10.25.14.150 (A10)
-route add -net 10.25.14.140 netmask 255.255.255.252 gw 10.25.14.146 (A6)
-route add -net 10.25.14.136 netmask 255.255.255.252 gw 10.25.14.146 (A5)
-route add -net 10.25.12.0 netmask 255.255.254.0 gw 10.25.14.146 (A4)
-route add -net 10.25.14.0 netmask 255.255.255.128 gw 10.25.14.146 (A3)
-route add -net 10.25.14.132 netmask 255.255.255.252 gw 10.25.14.146 (A2)
-route add -net 10.25.14.128 netmask 255.255.255.252 gw 10.25.14.146 (A1)
+route add -net 10.25.14.132 netmask 255.255.255.252 gw 10.25.14.130
+route add -net 10.25.14.136 netmask 255.255.255.252 gw 10.25.14.130
+route add -net 10.25.12.0 netmask 255.255.254.0 gw 10.25.14.130
+route add -net 10.25.14.0 netmask 255.255.255.128 gw 10.25.14.130
+route add -net 10.25.14.140 netmask 255.255.255.252 gw 10.25.14.130
+route add -net 10.25.14.144 netmask 255.255.255.252 gw 10.25.14.130
+route add -net 10.25.0.0 netmask 255.255.248.0 gw 10.25.14.150
+route add -net 10.25.8.0 netmask 255.255.252.0 gw 10.25.14.150
+
 ```
 
 **Heiter**
@@ -261,19 +262,19 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.149
 **Frieren**
 
 ```
-route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.12.14.145
-route add -net 10.25.12.0 netmask 255.255.254.0 gw 10.25.14.138  (A4)
-route add -net 10.25.14.0 netmask 255.255.255.128 gw 10.25.14.138  (A3)
-route add -net 10.25.14.132 netmask 255.255.255.252 gw 10.25.14.138  (A2)
-route add -net 10.25.14.128 netmask 255.255.255.252 gw 10.25.14.138  (A1)
+route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.129
+route add -net 10.25.12.0 netmask 255.255.254.0 gw 10.25.14.138
+route add -net 10.25.14.0 netmask 255.255.255.128 gw 10.25.14.138
+route add -net 10.25.14.140 netmask 255.255.255.252 gw 10.25.14.138
+route add -net 10.25.14.144 netmask 255.255.255.252 gw 10.25.14.138
 ```
 
 **Himmel**
 
 ```
-route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.12.14.137 
-route add -net 10.25.14.132 netmask 255.255.255.252 gw 10.25.14.3 (A2)
-route add -net 10.25.14.128 netmask 255.255.255.252 gw 10.25.14.3 (A1)
+route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.137
+route add -net 10.25.14.140 netmask 255.255.255.252 gw 10.25.14.2
+route add -net 10.25.14.144 netmask 255.255.255.252 gw 10.25.14.2
 ```
 
 **Fern**
