@@ -59,3 +59,225 @@ Setelah pandai mengatur jalur-jalur khusus, kalian diminta untuk membantu North 
 
 ## Pembahasan
 
+### A. Peta Wilayah
+
+**Topologi VLSM**
+
+<img width="666" alt="image" src="https://github.com/fihrizilhamr/Jarkom-Modul-5-D07-2023/assets/105486369/aa47913b-3e20-40b2-bfba-ceeddeebd735">
+
+
+
+**Topologi GNS**
+
+<img width="824" alt="image" src="https://github.com/fihrizilhamr/Jarkom-Modul-5-D07-2023/assets/105486369/93930d8c-e332-4a5e-8102-5a144c8fa421">
+
+
+
+### B. Rute, Tree, dan Pembagian IP
+
+**Rute**
+
+DIISI FOTO
+
+**Tree**
+
+DIISI FOTO
+
+**Pembagian IP**
+
+DIISI FOTO
+
+
+
+### C. Subnetting dan Routing
+
+Setelah mengetahui pembagian IP dari masing masing subnet, sekarang kami dapat melakukan subnetting pada masing masing node yang ada dalam setiap subnet.
+
+**Aura**
+
+```
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+	address 10.25.14.145
+	netmask 255.255.255.252
+
+auto eth2
+iface eth2 inet static
+	address 10.25.14.149
+	netmask 255.255.255.252
+```
+
+**Heiter**
+
+```
+auto eth0
+iface eth0 inet static
+	address 10.25.14.150
+	netmask 255.255.255.252
+	gateway 10.25.14.149
+
+auto eth1
+iface eth1 inet static
+	address 10.25.8.1
+	netmask 255.255.252.0
+
+auto eth2
+iface eth2 inet static
+	address 10.25.0.1
+	netmask 255.255.248.0
+```
+
+**Frieren**
+
+```
+auto eth0
+iface eth0 inet static
+	address 10.25.14.146
+	netmask 255.255.255.252
+	gateway 10.25.14.145
+
+auto eth1
+iface eth1 inet static
+	address 10.25.14.137
+	netmask 255.255.255.252
+
+auto eth2
+iface eth2 inet static
+	address 10.25.14.141
+	netmask 255.255.255.252
+```
+
+**Himmel**
+
+```
+auto eth0
+iface eth0 inet static
+	address 10.25.14.138
+	netmask 255.255.255.252
+	gateway 10.25.14.137
+
+auto eth1
+iface eth1 inet static
+	address 10.25.14.1
+	netmask 255.255.255.128
+
+auto eth2
+iface eth2 inet static
+	address 10.25.12.1
+	netmask 255.255.254.0
+```
+
+**Fern**
+
+```
+auto eth0
+iface eth0 inet static
+	address 10.25.14.3
+	netmask 255.255.255.128
+	gateway 10.25.14.1
+
+auto eth1
+iface eth1 inet static
+	address 10.25.14.133
+	netmask 255.255.255.252
+
+auto eth2
+iface eth2 inet static
+	address 10.25.14.129
+	netmask 255.255.255.252
+```
+
+**Sein**
+
+```
+auto eth0
+iface eth0 inet static
+	address 10.25.8.2
+	netmask 255.255.252.0
+	gateway 10.25.8.1
+```
+
+**Stark**
+
+```
+auto eth0
+iface eth0 inet static
+	address 10.25.14.142
+	netmask 255.255.255.252
+	gateway 10.25.14.141
+```
+
+**Revolte**
+
+```
+auto eth0
+iface eth0 inet static
+	address 10.25.14.130
+	netmask 255.255.255.252
+	gateway 10.25.14.129
+```
+
+**Richter**
+
+```
+auto eth0
+iface eth0 inet static
+	address 10.25.14.134
+	netmask 255.255.255.252
+	gateway 10.25.14.133
+```
+
+**Client**
+
+```
+auto eth0
+iface eth0 inet dhcp
+```
+
+Setelah melakukan subnetting pada masing masing node yang ada, Selanjutnya kami bisa melakukan Routing:
+
+**Aura**
+
+```
+route add -net 10.25.0.0 netmask 255.255.248.0 gw 10.25.14.150 (A9)
+route add -net 10.25.8.0 netmask 255.255.252.0 gw 10.25.14.150 (A10)
+route add -net 10.25.14.140 netmask 255.255.255.252 gw 10.25.14.146 (A6)
+route add -net 10.25.14.136 netmask 255.255.255.252 gw 10.25.14.146 (A5)
+route add -net 10.25.12.0 netmask 255.255.254.0 gw 10.25.14.146 (A4)
+route add -net 10.25.14.0 netmask 255.255.255.128 gw 10.25.14.146 (A3)
+route add -net 10.25.14.132 netmask 255.255.255.252 gw 10.25.14.146 (A2)
+route add -net 10.25.14.128 netmask 255.255.255.252 gw 10.25.14.146 (A1)
+```
+
+**Heiter**
+
+```
+route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.149
+```
+
+**Frieren**
+
+```
+route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.12.14.145
+route add -net 10.25.12.0 netmask 255.255.254.0 gw 10.25.14.138  (A4)
+route add -net 10.25.14.0 netmask 255.255.255.128 gw 10.25.14.138  (A3)
+route add -net 10.25.14.132 netmask 255.255.255.252 gw 10.25.14.138  (A2)
+route add -net 10.25.14.128 netmask 255.255.255.252 gw 10.25.14.138  (A1)
+```
+
+**Himmel**
+
+```
+route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.12.14.137 
+route add -net 10.25.14.132 netmask 255.255.255.252 gw 10.25.14.3 (A2)
+route add -net 10.25.14.128 netmask 255.255.255.252 gw 10.25.14.3 (A1)
+```
+
+**Fern**
+
+```
+route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.1
+```
