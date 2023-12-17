@@ -282,3 +282,140 @@ route add -net 10.25.14.144 netmask 255.255.255.252 gw 10.25.14.2
 ```
 route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.1
 ```
+
+
+
+### D. Konfigurasi
+
+#### Konfigurasi DHCP Server
+#### Konfigurasi DHCP Relay
+#### Konfigurasi DNS Server
+#### Konfigurasi Web Server
+#### Konfigurasi Client
+
+
+### 1.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
+
+### 2.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
+
+### 3.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
+
+### 4.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
+
+### 5.
+
+#### Script
+
+Jalankan script dibawah ini pada masing-masing webserver agar web server hanya dapat diakses saat jam kerja yaitu Senin-Jumat pada pukul 08.00 - 16.00.
+
+```
+# Allow HTTP access only outside restricted hours (Monday-Thursday 12:00-13:00, Friday 11:00-13:00)
+iptables -A INPUT -p tcp --dport 80 -m time --timestart 07:00 --timestop 11:59 --weekdays Mon,Tue,Wed,Thu -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -m time --timestart 13:01 --timestop 16:00 --weekdays Mon,Tue,Wed,Thu -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -m time --timestart 07:00 --timestop 10:59 --weekdays Fri -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -m time --timestart 13:01 --timestop 16:00 --weekdays Fri -j ACCEPT
+
+# Drop HTTP traffic during restricted hours (Monday-Thursday 12:00-13:00, Friday 11:00-13:00)
+iptables -A INPUT -p tcp --dport 80 -m time --timestart 12:00 --timestop 13:00 --weekdays Mon,Tue,Wed,Thu -j DROP
+iptables -A INPUT -p tcp --dport 80 -m time --timestart 11:00 --timestop 13:00 --weekdays Fri -j DROP
+
+# Drop other HTTP traffic
+iptables -A INPUT -p tcp --dport 80 -j DROP
+```
+#### Testing
+
+Dibawah ini merupakan hasil ``iptables -L`` setelah kita menjalankan script diatas.
+
+<img width="981" alt="image" src="https://github.com/fihrizilhamr/Jarkom-Modul-5-D07-2023/assets/105486369/dbb9bd99-c4e4-4c2f-8512-605e00bf9fa0">
+
+Setelah itu kita bisa mencoba melakukan testing dengan mengubah waktu pada node sein dengan sintaks berikut:
+
+```
+date 121314002023.00
+```
+
+Argumen di atas akan membuat waktu menjadi pukul 14:00 dan sesuai dengan petunjuk di soal, selanjutnya kami perlu menjalankan ``nc -l -p 80`` pada **sein** dan ``nc 10.12.8.2 80`` pada **client**. Hasilnya sein dan client akan bisa saling berbagi pesan menggunakan netcat.
+
+Jika waktu diubah menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), maka kedua node tersebut tidak akan bisa berbagi pesan menggunakan netcat.
+
+### 6.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
+
+### 7.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
+
+### 8.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
+
+### 9.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
+
+### 10.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
