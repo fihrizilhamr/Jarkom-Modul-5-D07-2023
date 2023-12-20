@@ -551,11 +551,34 @@ Jika waktu diubah menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), ma
 
 #### Script
 
-....................
+##### Web Server
+
+Jalankan script dibawah pada masing masing webserver, agar webserver dapat diakses hanya sesuai ketentuan diatas:
+
+```
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+apt-get update
+apt-get install netcat -y
+
+
+# Melarang akses pada Senin-Kamis pukul 12:00 - 13:00
+iptables -A INPUT -m time --weekdays Mon,Tue,Wed,Thu --timestart 12:00 --timestop 13:00 -j DROP
+
+# Melarang akses HTTP (port 80) pada Jumat pukul 11:00 - 13:00
+iptables -A INPUT -m time --weekdays Fri --timestart 11:00 --timestop 13:00 -j DROP
+
+# Mengizinkan akses pada Senin-Jumat pukul 08:00 - 16:00
+iptables -A INPUT -m time --weekdays Mon,Tue,Wed,Thu,Fri --timestart 08:00 --timestop 16:00 -j ACCEPT
+
+# Menolak akses untuk aturan lain yang tidak memenuhi kondisi di atas
+iptables -A INPUT -j DROP
+```
 
 #### Testing
 
-....................
+Lampiran pada nomor 5 juga merupakan hasil ``iptables`` -L setelah kita menjalankan script diatas. Karena pada dasarnya nomor 5 dan 6 berhubungan.
+
+
 
 ### 7. Karena terdapat 2 WebServer, kalian diminta agar setiap client yang mengakses Sein dengan Port 80 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan dan request dari client yang mengakses Stark dengan port 443 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan.
 
