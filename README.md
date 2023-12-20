@@ -578,7 +578,15 @@ iptables -A INPUT -j DROP
 
 Lampiran pada nomor 5 juga merupakan hasil ``iptables`` -L setelah kita menjalankan script diatas. Karena pada dasarnya nomor 5 dan 6 berhubungan.
 
+Setelah itu, coba lakukan testing dengan mengubah waktu pada node sein dengan sintaks berikut:
 
+```
+date 121312002023.00
+```
+
+Argumen diatas akan membuat waktu menjadi Hari Rabu 13 Desember 2023 pukul 12:00 dan sesuai dengan petunjuk di soal. Selanjutnya, jalankan ``nc -l -p 80`` pada **sein** dan ``nc 10.12.8.2 80`` pada **client**. Hasilnya sein dan client tidak akan bisa saling berbagi pesan menggunakan netcat.
+
+selanjutnya, jika waktu diganti menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), maka kedua node tersebut akan bisa berbagi pesan menggunakan netcat.
 
 ### 7. Karena terdapat 2 WebServer, kalian diminta agar setiap client yang mengakses Sein dengan Port 80 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan dan request dari client yang mengakses Stark dengan port 443 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan.
 
