@@ -63,13 +63,13 @@ Setelah pandai mengatur jalur-jalur khusus, kalian diminta untuk membantu North 
 
 **Topologi VLSM**
 
-<img width="666" alt="image" src="https://github.com/fihrizilhamr/Jarkom-Modul-5-D07-2023/assets/105486369/aa47913b-3e20-40b2-bfba-ceeddeebd735">
+<img alt="image" src="images/RUTE JARKOM MODUL 5 D07.png">
 
 
 
 **Topologi GNS**
 
-<img width="824" alt="image" src="https://github.com/fihrizilhamr/Jarkom-Modul-5-D07-2023/assets/105486369/93930d8c-e332-4a5e-8102-5a144c8fa421">
+<img alt="image" src="images/TOPOLOGI JARKOM MODUL 5 D07.png">
 
 
 
@@ -77,17 +77,40 @@ Setelah pandai mengatur jalur-jalur khusus, kalian diminta untuk membantu North 
 
 **Rute**
 
-DIISI FOTO
+| Nama Subnet                             | Rute                                        | Jumlah IP | Netmask |
+|-----------------------------------------|---------------------------------------------|-----------|---------|
+| A1                                      | Aura-Frieren                                | 2         | /30     |
+| A2                                      | Frieren-Stark                               | 2         | /30     |
+| A3                                      | Frieren-Himmel                              | 2         | /30     |
+| A4                                      | Himmel-LaubHills                            | 256       | /23     |
+| A5                                      | Himmel-Switch1-Fern-Switch1-SchwerMountain | 66        | /25     |
+| A6                                      | Fern-Richter                                | 2         | /30     |
+| A7                                      | Fern-Switch2-Revolte                        | 2         | /30     |
+| A8                                      | Aura-Heiter                                | 2         | /30     |
+| A9                                      | Heiter-TurkRegion                           | 1023      | /21     |
+| A10                                     | Heiter-Switch3-Sein-Switch3-GrobeForest    | 514       | /22     |
+| Total                                   |                                             | 1871      | /20     |
+
 
 **Tree**
 
-DIISI FOTO
+<img alt="image" src="images/VLSM TREE JARKOM MODUL 5 D07.png">
+
 
 **Pembagian IP**
 
-<img width="909" alt="image" src="https://github.com/fihrizilhamr/Jarkom-Modul-5-D07-2023/assets/105486369/a8aea2b0-bfbd-4f1f-a4e3-962dfa14e037">
-
-
+| Subnet | Network ID    | Netmask             | Broadcast       |
+|--------|---------------|---------------------|-----------------|
+| A1     | 10.25.14.128  | 255.255.255.252     | 10.25.14.131    |
+| A2     | 10.25.14.132  | 255.255.255.252     | 10.25.14.135    |
+| A3     | 10.25.14.136  | 255.255.255.252     | 10.25.14.139    |
+| A4     | 10.25.12.0    | 255.255.254.0       | 10.25.13.255    |
+| A5     | 10.25.14.0    | 255.255.255.128     | 10.25.14.127    |
+| A6     | 10.25.14.140  | 255.255.255.252     | 10.25.14.143    |
+| A7     | 10.25.14.144  | 255.255.255.252     | 10.25.14.147    |
+| A8     | 10.25.14.148  | 255.255.255.252     | 10.25.14.151    |
+| A9     | 10.25.0.0     | 255.255.248.0       | 10.25.7.255     |
+| A10    | 10.25.8.0     | 255.255.252.0       | 10.25.11.255    |
 
 ### C. Subnetting dan Routing
 
@@ -250,7 +273,6 @@ route add -net 10.25.14.140 netmask 255.255.255.252 gw 10.25.14.130
 route add -net 10.25.14.144 netmask 255.255.255.252 gw 10.25.14.130
 route add -net 10.25.0.0 netmask 255.255.248.0 gw 10.25.14.150
 route add -net 10.25.8.0 netmask 255.255.252.0 gw 10.25.14.150
-
 ```
 
 **Heiter**
@@ -288,23 +310,124 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.1
 ### D. Konfigurasi
 
 #### Konfigurasi DHCP Server
+```
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+
+apt-get update
+apt-get install isc-dhcp-server -y
+
+echo "
+INTERFACESv4=\"eth0\"
+INTERFACESv6=\"\"" > /etc/default/isc-dhcp-server
+
+service isc-dhcp-server restart
+
+echo "
+subnet 10.25.14.128 netmask 255.255.255.252 {
+}
+subnet 10.25.14.132 netmask 255.255.255.252 {
+}
+subnet 10.25.14.136 netmask 255.255.255.252 {
+}
+subnet 10.25.14.140 netmask 255.255.255.252 {
+}
+subnet 10.25.14.144 netmask 255.255.255.252 {
+}
+subnet 10.25.14.148 netmask 255.255.255.252 {
+}
+subnet 10.25.0.0 netmask 255.255.248.0 {
+	range 10.25.0.2 10.25.7.254;
+	option routers 10.25.0.1;
+	option broadcast-address 10.25.7.255;
+	option domain-name-servers 10.25.14.142;
+	default-lease-time 720;
+	max-lease-time 5760;
+}
+
+subnet 10.25.8.0 netmask 255.255.252.0 {
+	range 10.25.8.3 10.25.11.254;
+	option routers 10.25.8.1;
+	option broadcast-address 10.25.11.255;
+	option domain-name-servers 10.25.14.142;
+	default-lease-time 720;
+	max-lease-time 5760;
+}
+subnet 10.25.12.0 netmask 255.255.254.0 {
+	range 10.25.12.2 10.25.13.254;
+	option routers 10.25.12.1;
+	option broadcast-address 10.25.13.255;
+	option domain-name-servers 10.25.14.142;
+	default-lease-time 720;
+	max-lease-time 5760;
+}
+
+subnet 10.25.14.0 netmask 255.255.255.128 {
+	range 10.25.14.3 10.25.14.126;
+	option routers 10.25.14.1;
+	option broadcast-address 10.25.14.127;
+	option domain-name-servers 10.25.14.142;
+	default-lease-time 720;
+	max-lease-time 5760;
+}
+" > /etc/dhcp/dhcpd.conf
+
+service isc-dhcp-server restart
+```
+
 #### Konfigurasi DHCP Relay
+```
+apt-get update
+apt-get install isc-dhcp-relay -y
+
+echo "
+SERVERS=\"10.25.14.146\"
+INTERFACES=\"eth0 eth1 eth2 eth3 eth4\"
+OPTIONS=\"\"" > /etc/default/isc-dhcp-relay
+
+echo "
+net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+
+service isc-dhcp-relay start
+```
+
 #### Konfigurasi DNS Server
-#### Konfigurasi Web Server
+```
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+
+apt-get update
+apt-get install bind9 -y
+
+service bind9 restart
+
+echo "
+options {
+    directory \"/var/cache/bind\";
+
+    forwarders {
+        8.8.8.8;
+        8.8.8.4;
+        192.168.122.1;
+        0.0.0.0;
+    };
+
+    // dnssec-validation auto;
+    allow-query { any; };
+    auth-nxdomain no;
+    listen-on-v6 { any; };
+};" > /etc/bind/named.conf.options
+
+service bind9 restart
+```
 #### Konfigurasi Client
+```
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+apt-get update
+apt-get install netcat -y
+apt-get install nmap -y
+```
 
 
-### 1.
-
-#### Script
-
-....................
-
-#### Testing
-
-....................
-
-### 2.
+### 1. Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Aura menggunakan iptables, tetapi tidak ingin menggunakan MASQUERADE.
 
 #### Script
 
@@ -314,7 +437,7 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.1
 
 ....................
 
-### 3.
+### 2. Kalian diminta untuk melakukan drop semua TCP dan UDP kecuali port 8080 pada TCP.
 
 #### Script
 
@@ -324,7 +447,7 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.1
 
 ....................
 
-### 4.
+### 3. Kepala Suku North Area meminta kalian untuk membatasi DHCP dan DNS Server hanya dapat dilakukan ping oleh maksimal 3 device secara bersamaan, selebihnya akan di drop.
 
 #### Script
 
@@ -334,7 +457,17 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.25.14.1
 
 ....................
 
-### 5.
+### 4. Lakukan pembatasan sehingga koneksi SSH pada Web Server hanya dapat dilakukan oleh masyarakat yang berada pada GrobeForest.
+
+#### Script
+
+....................
+
+#### Testing
+
+....................
+
+### 5. Selain itu, akses menuju WebServer hanya diperbolehkan saat jam kerja yaitu Senin-Jumat pada pukul 08.00-16.00.
 
 #### Script
 
@@ -370,7 +503,7 @@ Argumen di atas akan membuat waktu menjadi pukul 14:00 dan sesuai dengan petunju
 
 Jika waktu diubah menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), maka kedua node tersebut tidak akan bisa berbagi pesan menggunakan netcat.
 
-### 6.
+### 6. Lalu, karena ternyata terdapat beberapa waktu di mana network administrator dari WebServer tidak bisa stand by, sehingga perlu ditambahkan rule bahwa akses pada hari Senin - Kamis pada jam 12.00 - 13.00 dilarang (istirahat maksi cuy) dan akses di hari Jumat pada jam 11.00 - 13.00 juga dilarang (maklum, Jumatan rek).
 
 #### Script
 
@@ -380,7 +513,7 @@ Jika waktu diubah menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), ma
 
 ....................
 
-### 7.
+### 7. Karena terdapat 2 WebServer, kalian diminta agar setiap client yang mengakses Sein dengan Port 80 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan dan request dari client yang mengakses Stark dengan port 443 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan.
 
 #### Script
 
@@ -390,7 +523,7 @@ Jika waktu diubah menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), ma
 
 ....................
 
-### 8.
+### 8. Karena berbeda koalisi politik, maka subnet dengan masyarakat yang berada pada Revolte dilarang keras mengakses WebServer hingga masa pencoblosan pemilu kepala suku 2024 berakhir. Masa pemilu (hingga pemungutan dan penghitungan suara selesai) kepala suku bersamaan dengan masa pemilu Presiden dan Wakil Presiden Indonesia 2024.
 
 #### Script
 
@@ -400,7 +533,7 @@ Jika waktu diubah menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), ma
 
 ....................
 
-### 9.
+### 9. Sadar akan adanya potensial saling serang antar kubu politik, maka WebServer harus dapat secara otomatis memblokir  alamat IP yang melakukan scanning port dalam jumlah banyak (maksimal 20 scan port) di dalam selang waktu 10 menit. (clue: test dengan nmap)
 
 #### Script
 
@@ -410,7 +543,7 @@ Jika waktu diubah menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), ma
 
 ....................
 
-### 10.
+### 10. Karena kepala suku ingin tau paket apa saja yang di-drop, maka di setiap node server dan router ditambahkan logging paket yang di-drop dengan standard syslog level.
 
 #### Script
 
@@ -419,3 +552,7 @@ Jika waktu diubah menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), ma
 #### Testing
 
 ....................
+
+### Kendala
+
+Dalam pengerjaan Soal nomor 9 dan 10, kami mengalami beberapa kendala. Untuk nomor 9, kami kesulitan menemukan informasi mengenai scanning port dalam modul, sehingga kami perlu mencari informasi tambahan melalui pencarian online, yang memakan waktu lebih lama. Sementara itu, pada nomor 10, kami menghadapi kesulitan dalam menciptakan log. Kami terus mendapatkan kesalahan saat mencoba mengimpor Image Ubuntu yang benar ke GNS3.
