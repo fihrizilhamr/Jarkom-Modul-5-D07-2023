@@ -430,42 +430,86 @@ apt-get install nmap -y
 ### 1. Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Aura menggunakan iptables, tetapi tidak ingin menggunakan MASQUERADE.
 
 #### Script
-
-....................
+```
+eth0_ip=$(ip addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source "$eth0_ip" -s 10.25.0.0/16
+```
 
 #### Testing
 
-....................
+Dibawah ini merupakan hasil ``iptables -L -t nat`` setelah kita menjalankan script diatas.
+
+<img alt="image" src="images/TESTING 1_1.png">
+
+Setelah itu kita bisa mencoba melakukan ping google.
+
+<img alt="image" src="images/TESTING 1_2.png">
+
 
 ### 2. Kalian diminta untuk melakukan drop semua TCP dan UDP kecuali port 8080 pada TCP.
 
 #### Script
+```
+iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -p udp -j DROP
+iptables -A INPUT -p tcp -j DROP
+```
 
-....................
 
 #### Testing
 
-....................
+<img alt="image" src="images/TESTING 2_1.png">
+
+Gunakan perintah nc untuk mencoba koneksi ke port tertentu menggunakan protokol TCP maupun UDP. Gunakan perintah berikut, untuk protokol UDP: 
+```
+nc -u <alamat_ip> <port>
+```
+Gunakan perintah berikut, untuk protokol TCP: 
+```
+nc <alamat_ip> <port>
+```
+Aturan iptables akan memastikan hanya mengizinkan port 8080 pada TCP.
 
 ### 3. Kepala Suku North Area meminta kalian untuk membatasi DHCP dan DNS Server hanya dapat dilakukan ping oleh maksimal 3 device secara bersamaan, selebihnya akan di drop.
 
 #### Script
+```
+iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP
+```
 
-....................
 
 #### Testing
 
-....................
+Di bawah ini merupakan hasil ``iptables -L`` setelah kita menjalankan script diatas.
+
+<img alt="image" src="images/TESTING 3_1.png">
+
+Walaupun kita melakukan ping pada ketiga host yang ada, host akan tetap memberikan respon. Akan tetapi ketika kita melakukan ping pada keempat client yang ada, host akan berhenti memberikan respon.
+
+<img alt="image" src="images/TESTING 3_2.png">
+
 
 ### 4. Lakukan pembatasan sehingga koneksi SSH pada Web Server hanya dapat dilakukan oleh masyarakat yang berada pada GrobeForest.
 
 #### Script
-
-....................
+```
+iptables -A INPUT -p tcp --dport 22 -j LOG --log-prefix "SSH Drop: " --log-level info
+iptables -A INPUT -p tcp --dport 22 -j DROP
+```
 
 #### Testing
 
-....................
+Di bawah ini merupakan hasil ``iptables -L`` setelah kita menjalankan script diatas.
+
+<img alt="image" src="images/TESTING 4_1.png">
+
+Ketika kita mencoba koneksi SSH pada Web Server menggunakan client selain GrobeForest, client tidak akan mendapatkan respon.
+
+<img alt="image" src="images/TESTING 4_2.png">
+
+Akan tetapi, ketika kita mencoba koneksi SSH pada Web Server menggunakan client GrobeForest, client akan mendapatkan respon dari WebServer.
+
+<img alt="image" src="images/TESTING 4_3.png">
 
 ### 5. Selain itu, akses menuju WebServer hanya diperbolehkan saat jam kerja yaitu Senin-Jumat pada pukul 08.00-16.00.
 
@@ -516,42 +560,110 @@ Jika waktu diubah menuju jam malam, yaitu 19:00 (tidak sesuai dengan syarat), ma
 ### 7. Karena terdapat 2 WebServer, kalian diminta agar setiap client yang mengakses Sein dengan Port 80 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan dan request dari client yang mengakses Stark dengan port 443 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan.
 
 #### Script
+##### Sein
+```
+iptables -t nat -A PREROUTING -p tcp --dport 80 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.25.8.2:80
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.25.14.134:80
+```
+##### Stark
+```
+iptables -t nat -A PREROUTING -p tcp --dport 443 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.25.8.2:443
+iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination 10.25.14.134:443
+```
 
-....................
 
 #### Testing
 
-....................
+Di bawah ini merupakan hasil ``iptables -L PREROUTING -t nat -v -n`` untuk node Sein, setelah kita menjalankan script diatas.
+
+<img alt="image" src="images/TESTING 7_2.png">
+
+Di bawah ini merupakan hasil ``iptables -L PREROUTING -t nat -v -n`` untuk node Stark, setelah kita menjalankan script diatas.
+
+<img alt="image" src="images/TESTING 7_1.png">
+
+Hubungkan client dengan server, dengan menggunakan netcat sesuai port yang ingin diuji. Kirim pesan pada client, hasilnya akan muncul di webserver pertama. Hentikan netcat pada client, kemudian hubungkan kembali client dengan server. Pesan akan keluar di webserver kedua
+
 
 ### 8. Karena berbeda koalisi politik, maka subnet dengan masyarakat yang berada pada Revolte dilarang keras mengakses WebServer hingga masa pencoblosan pemilu kepala suku 2024 berakhir. Masa pemilu (hingga pemungutan dan penghitungan suara selesai) kepala suku bersamaan dengan masa pemilu Presiden dan Wakil Presiden Indonesia 2024.
 
 #### Script
 
-....................
+```
+iptables -A INPUT -s 10.25.14.144/30 -m time --datestart '2023-12-14' --datestop '2024-06-27' -j LOG --log-prefix "Election Drop: " --log-level info
+iptables -A INPUT -s 10.25.14.144/30 -m time --datestart '2023-12-14' --datestop '2024-06-27' -j DROP
+```
 
 #### Testing
 
-....................
+Di bawah ini merupakan hasil ``iptables -L`` setelah kita menjalankan script diatas.
+
+<img alt="image" src="images/TESTING 8_1.png">
+
+```
+date --set="2024-06-27 1400"
+```
+
+Argumen di atas akan membuat tanggal menjadi 2024-06-27 dengan pukul 14:00. Sehingga sesuai dengan ketentuan di soal. Selanjutnya, tes dengan menjalankan netcat, untuk mencoba saling berbagi pesan.
+
+Jika tanggal belum melewati 2024-06-27 (tidak sesuai dengan syarat), maka node tidak akan bisa berbagi pesan.
+
 
 ### 9. Sadar akan adanya potensial saling serang antar kubu politik, maka WebServer harus dapat secara otomatis memblokir  alamat IP yang melakukan scanning port dalam jumlah banyak (maksimal 20 scan port) di dalam selang waktu 10 menit. (clue: test dengan nmap)
 
 #### Script
 
-....................
+```
+iptables -N scan_port
+
+iptables -A INPUT -m recent --name scan_port --update --seconds 600 --hitcount 20 -j LOG --log-prefix "Port Scan Detected (INPUT): " --log-level info
+iptables -A INPUT -m recent --name scan_port --update --seconds 600 --hitcount 20 -j DROP
+
+iptables -A FORWARD -m recent --name scan_port --update --seconds 600 --hitcount 20 -j LOG --log-prefix "Port Scan Detected (FORWARD): " --log-level info
+iptables -A FORWARD -m recent --name scan_port --update --seconds 600 --hitcount 20 -j DROP
+
+iptables -A INPUT -m recent --name scan_port --set -j ACCEPT
+iptables -A FORWARD -m recent --name scan_port --set -j ACCEPT
+
+iptables -A INPUT -j LOG --log-prefix "Other Drop: " --log-level info
+iptables -A INPUT -j DROP
+```
 
 #### Testing
 
-....................
+Di bawah ini merupakan hasil ``iptables -L`` setelah kita menjalankan script diatas.
+
+<img alt="image" src="images/TESTING 9_1.png">
+
+Setelah itu kita bisa mencoba melakukan testing dengan scanning port dari 1-25. Dapat dilihat, ada beberapa port yang terkena filter. Kemudian dalam percobaan kedua, host akan blocking ping dari client
+
+<img alt="image" src="images/TESTING 9_2.png">
+
+<img alt="image" src="images/TESTING 9_3.png">
 
 ### 10. Karena kepala suku ingin tau paket apa saja yang di-drop, maka di setiap node server dan router ditambahkan logging paket yang di-drop dengan standard syslog level.
 
 #### Script
 
-....................
+```
+iptables -A INPUT -p tcp --dport 22 -j LOG --log-prefix "SSH Drop: " --log-level info
+
+iptables -A INPUT -m time --weekdays Mon,Tue,Wed,Thu --timestart 12:00 --timestop 13:00 -j LOG --log-prefix "Time Drop: " --log-level info
+
+iptables -A INPUT -m time --weekdays Fri --timestart 11:00 --timestop 13:00 -j LOG --log-prefix "Time Drop: " --log-level info
+
+iptables -A INPUT -s 10.25.14.144/30 -m time --datestart '2023-12-14' --datestop '2024-06-27' -j LOG --log-prefix "Election Drop: " --log-level info
+
+iptables -A INPUT -m recent --name scan_port --update --seconds 600 --hitcount 20 -j LOG --log-prefix "Port Scan Detected (INPUT): " --log-level info
+
+iptables -A FORWARD -m recent --name scan_port --update --seconds 600 --hitcount 20 -j LOG --log-prefix "Port Scan Detected (FORWARD): " --log-level info
+
+iptables -A INPUT -j LOG --log-prefix "Other Drop: " --log-level info
+```
 
 #### Testing
 
-....................
+..................
 
 ### Kendala
 
